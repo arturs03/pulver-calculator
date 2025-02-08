@@ -4,16 +4,25 @@
       <legend class="text-lg font-semibold mb-2">Krāsojamās detaļas figūra:</legend>
       <div class="space-y-2">
         <label class="flex items-center space-x-2">
-          <input type="radio" v-model="figuraType" value="plakne" class="form-radio" />
-          <span>A: plakne - 2D objekts</span>
+          <input type="radio" v-model="figuraType" value="plakne" class="radio" />
+          <span>Plakne - 2D objekts</span>
+          <Info
+            data="Plakne - 2D objekts (plakana detaļa, flancis, metāla loksne utt.). Krāsošanas plakni rēķina no abām pusēm."
+          />
         </label>
         <label class="flex items-center space-x-2">
-          <input type="radio" v-model="figuraType" value="telpa" class="form-radio" />
-          <span>B: telpa - 3D objekts</span>
+          <input type="radio" v-model="figuraType" value="telpa" class="radio" />
+          <span>Telpa - 3D objekts</span>
+          <Info
+            data="Telpa - 3D objekts (riteņa disks, lode utt.). Kārbveida detaļai rēķina ārējo plakni."
+          />
         </label>
         <label class="flex items-center space-x-2">
-          <input type="radio" v-model="figuraType" value="rezgis" class="form-radio" />
-          <span>C: režģis</span>
+          <input type="radio" v-model="figuraType" value="rezgis" class="radio" />
+          <span>Režģis</span>
+          <Info
+            data="Režģis (žogs, vārti, balkons, siets, velo rāmis,  utt.). Aprēķinā ņem vērā profilu apkārtmēru S un profilu garumu L."
+          />
         </label>
       </div>
     </fieldset>
@@ -21,51 +30,26 @@
     <div v-if="figuraType === 'plakne'" class="space-y-4">
       <div>
         <label for="garums-plakne" class="block text-sm font-medium">Garums L, mm:</label>
-        <input
-          id="garums-plakne"
-          v-model.number="garums"
-          type="number"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        />
+        <input id="garums-plakne" v-model.number="garums" type="number" class="input" />
       </div>
       <div>
         <label for="platums-plakne" class="block text-sm font-medium">Platums W, mm:</label>
-        <input
-          id="platums-plakne"
-          v-model.number="platums"
-          type="number"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        />
+        <input id="platums-plakne" v-model.number="platums" type="number" class="input" />
       </div>
     </div>
 
     <div v-if="figuraType === 'telpa'" class="space-y-4">
       <div>
         <label for="garums-telpa" class="block text-sm font-medium">Garums L, mm:</label>
-        <input
-          id="garums-telpa"
-          v-model.number="garums"
-          type="number"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        />
+        <input id="garums-telpa" v-model.number="garums" type="number" class="input" />
       </div>
       <div>
         <label for="platums-telpa" class="block text-sm font-medium">Platums W, mm:</label>
-        <input
-          id="platums-telpa"
-          v-model.number="platums"
-          type="number"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        />
+        <input id="platums-telpa" v-model.number="platums" type="number" class="input" />
       </div>
       <div>
         <label for="augstums-telpa" class="block text-sm font-medium">Augstums H, mm:</label>
-        <input
-          id="augstums-telpa"
-          v-model.number="augstums"
-          type="number"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        />
+        <input id="augstums-telpa" v-model.number="augstums" type="number" class="input" />
       </div>
     </div>
 
@@ -73,22 +57,20 @@
       <fieldset>
         <legend class="text-sm font-medium mb-2">Profila apkārtmērs S:</legend>
         <div class="space-y-2">
-          <label v-for="s in [10, 20, 30, 40, 50]" :key="s" class="flex items-center space-x-2">
-            <input type="radio" v-model="selectedS" :value="s" class="form-radio" />
-            <span>S={{ s }} mm</span>
-            <button
-              @click.prevent="showInfo = s"
-              class="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none focus:underline"
-              :aria-label="`Informācija par S=${s} mm`"
-            >
-              ℹ️
-            </button>
+          <label v-for="s in [10, 20, 30, 40, 50]" :key="s" class="flex flex-col space-x-2">
+            <div class="flex gap-2 mb-1">
+              <p class="contents text-sm font-medium">S={{ s }}mm</p>
+              <Info :data="getSInfo(s)" />
+            </div>
+            <input
+              type="number"
+              class="input validator"
+              required
+              title="Must be between be 1 to 10"
+            />
           </label>
         </div>
       </fieldset>
-      <div v-if="showInfo" class="mt-2 p-4 bg-blue-50 rounded-md">
-        <p>{{ getSInfo(showInfo) }}</p>
-      </div>
     </div>
 
     <button
@@ -103,7 +85,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import Info from '@/components/ui/Info.vue'
+import { ref } from 'vue'
 
 const figuraType = ref('plakne')
 const garums = ref(0)

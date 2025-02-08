@@ -13,43 +13,63 @@
       vai arī neskaidru jautājumu gadījumā, augšupielādējiet detaļas foto vai rasējumu
     </p>
 
-    <Form v-slot="{ errors }" @submit="onSubmit">
-      <div v-for="(section, index) in sections" :key="index" class="mb-4">
-        <div
-          @click="toggleSection(index)"
-          class="flex justify-between items-center p-2 bg-gray-200 cursor-pointer"
+    <div class="w-full flex justify-center">
+      <ul class="steps mb-8">
+        <li
+          v-for="(section, index) in sections"
+          :key="index"
+          class="step"
+          :class="{ 'step-primary': activeSection.step >= section.step }"
+          @click="activeSection = section"
         >
-          <h2 class="text-lg font-semibold">{{ section.title }}</h2>
-          <span>{{ section.isOpen ? '-' : '+' }}</span>
-        </div>
-        <div v-if="section.isOpen" class="p-4 border border-gray-200">
-          <component
-            :is="section.component"
-            v-model="formData[section.key]"
-            @update:modelValue="updateFormData(section.key, $event)"
-          />
-        </div>
-      </div>
+          {{ section.title }}
+        </li>
+      </ul>
+    </div>
 
-      <div class="mb-4">
-        <h2 class="text-lg font-semibold mb-2">Komentāri</h2>
-        <textarea
-          v-model="formData.comments"
-          class="w-full p-2 border rounded"
-          rows="6"
-          placeholder="Norādiet: Detaļas materiālu un esošo virsmas pārklājumu, Detaļas pielietojumu, Vai ir āra apstākļu iedarbība, Redzamās virsmas, Piekares punktus, Piegādes gadījumā adresi, kontaktpersonas t.nr., darba laiku, Citu svarīgu informāciju"
-        ></textarea>
+    <div class="card card-border border-base-300 card-md mb-8">
+      <div class="card-body gap-4">
+        <component
+          :is="activeSection.component"
+          v-model="formData[activeSection.key]"
+          @update:model-value="updateFormData(activeSection.key, $event)"
+        />
       </div>
+    </div>
+    <div class="flex items-center gap-4 mb-10">
+      <button
+        v-if="activeSection.step > 1"
+        class="btn btn-neutral"
+        @click="activeSection = sections[activeSection.step - 2]"
+      >
+        Iepriekšējais
+      </button>
+      <button
+        v-if="activeSection.step < 6"
+        class="btn btn-primary ml-auto"
+        @click="activeSection = sections[activeSection.step]"
+      >
+        Nākamais
+      </button>
+    </div>
+    <div class="mb-4">
+      <h2 class="text-lg font-semibold mb-2">Komentāri</h2>
+      <textarea
+        v-model="formData.comments"
+        class="w-full p-2 border rounded"
+        rows="6"
+        placeholder="Norādiet: Detaļas materiālu un esošo virsmas pārklājumu, Detaļas pielietojumu, Vai ir āra apstākļu iedarbība, Redzamās virsmas, Piekares punktus, Piegādes gadījumā adresi, kontaktpersonas t.nr., darba laiku, Citu svarīgu informāciju"
+      ></textarea>
+    </div>
 
-      <div class="mt-4">
-        <button
-          type="submit"
-          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-        >
-          Aprēķināt cenu
-        </button>
-      </div>
-    </Form>
+    <div class="mt-4">
+      <button
+        type="submit"
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+      >
+        Aprēķināt cenu
+      </button>
+    </div>
 
     <div v-if="calculatedPrice" class="mt-4 p-4 bg-green-100 border border-green-400 rounded">
       <h2 class="text-xl font-bold">Aprēķinātā cena: {{ calculatedPrice }} EUR</h2>
@@ -65,7 +85,7 @@ import { toFormValidator } from '@vee-validate/zod'
 
 import PaintArea from '@/components/PaintArea.vue'
 import IronThicknes from '@/components/IronThicknes.vue'
-import Overlay from '@/components/Overlay.vue'
+import OverlayType from '@/components/OverlayType.vue'
 import Packaging from '@/components/Packaging.vue'
 import PreProcessing from '@/components/PreProcessing.vue'
 import Transportation from '@/components/Transportation.vue'
@@ -90,14 +110,16 @@ const sections = reactive([
     title: 'KRĀSOŠANAS LAUKUMS',
     component: PaintArea,
     key: 'PaintArea',
-    isOpen: false,
+    step: 1,
   },
-  { title: 'METĀLA BIEZUMS', component: IronThicknes, key: 'IronThicknes', isOpen: false },
-  { title: 'PĀRKLĀJUMS', component: Overlay, key: 'Overlay', isOpen: false },
-  { title: 'Packaging', component: Packaging, key: 'Packaging', isOpen: false },
-  { title: 'PRIEKŠAPSTRĀDE', component: PreProcessing, key: 'PreProcessing', isOpen: false },
-  { title: 'Transportation', component: Transportation, key: 'Transportation', isOpen: false },
+  { title: 'METĀLA BIEZUMS', component: IronThicknes, key: 'IronThicknes', step: 2 },
+  { title: 'PĀRKLĀJUMS', component: OverlayType, key: 'Overlay', step: 3 },
+  { title: 'Packaging', component: Packaging, key: 'Packaging', step: 4 },
+  { title: 'PRIEKŠAPSTRĀDE', component: PreProcessing, key: 'PreProcessing', step: 5 },
+  { title: 'Transportation', component: Transportation, key: 'Transportation', step: 6 },
 ])
+
+const activeSection = ref(sections[0])
 
 const formData = reactive({
   PaintArea: 0,
