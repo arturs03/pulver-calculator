@@ -8,7 +8,7 @@
             type="radio"
             v-model="selectedPrieksapstrade"
             :value="option.value"
-            class="form-radio"
+            class="radio"
           />
           <span>{{ option.label }}</span>
         </label>

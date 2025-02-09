@@ -8,17 +8,11 @@
           :key="option"
           class="flex items-center space-x-2"
         >
-          <input
-            type="checkbox"
-            v-model="selectedParklajumi"
-            :value="option"
-            class="form-checkbox"
-          />
+          <input type="checkbox" v-model="selectedParklajumi" :value="option" class="checkbox" />
           <span>{{ option }}</span>
         </label>
       </div>
     </fieldset>
-
     <fieldset>
       <legend class="text-lg font-semibold mb-2">Nepieciešamais virsmas izskats:</legend>
       <div class="space-y-2">
@@ -27,7 +21,7 @@
           :key="option"
           class="flex items-center space-x-2"
         >
-          <input type="radio" v-model="selectedVirsmasIzskats" :value="option" class="form-radio" />
+          <input type="radio" v-model="selectedVirsmasIzskats" :value="option" class="radio" />
           <span>{{ option }}</span>
         </label>
       </div>

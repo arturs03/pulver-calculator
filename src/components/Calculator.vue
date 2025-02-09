@@ -52,17 +52,7 @@
         Nākamais
       </button>
     </div>
-    <div class="mb-4">
-      <h2 class="text-lg font-semibold mb-2">Komentāri</h2>
-      <textarea
-        v-model="formData.comments"
-        class="w-full p-2 border rounded"
-        rows="6"
-        placeholder="Norādiet: Detaļas materiālu un esošo virsmas pārklājumu, Detaļas pielietojumu, Vai ir āra apstākļu iedarbība, Redzamās virsmas, Piekares punktus, Piegādes gadījumā adresi, kontaktpersonas t.nr., darba laiku, Citu svarīgu informāciju"
-      ></textarea>
-    </div>
-
-    <div class="mt-4">
+    <div v-if="activeSection.step === 6" class="mt-4">
       <button
         type="submit"
         class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
@@ -70,7 +60,6 @@
         Aprēķināt cenu
       </button>
     </div>
-
     <div v-if="calculatedPrice" class="mt-4 p-4 bg-green-100 border border-green-400 rounded">
       <h2 class="text-xl font-bold">Aprēķinātā cena: {{ calculatedPrice }} EUR</h2>
     </div>
@@ -107,30 +96,30 @@ const schema = toFormValidator(
 
 const sections = reactive([
   {
-    title: 'KRĀSOŠANAS LAUKUMS',
+    title: 'Krāsošanas laukums',
     component: PaintArea,
     key: 'PaintArea',
     step: 1,
   },
-  { title: 'METĀLA BIEZUMS', component: IronThicknes, key: 'IronThicknes', step: 2 },
-  { title: 'PĀRKLĀJUMS', component: OverlayType, key: 'Overlay', step: 3 },
-  { title: 'Packaging', component: Packaging, key: 'Packaging', step: 4 },
-  { title: 'PRIEKŠAPSTRĀDE', component: PreProcessing, key: 'PreProcessing', step: 5 },
-  { title: 'Transportation', component: Transportation, key: 'Transportation', step: 6 },
+  { title: 'Metāla biezums', component: IronThicknes, key: 'IronThicknes', step: 2 },
+  { title: 'Pārklājums', component: OverlayType, key: 'Overlay', step: 3 },
+  { title: 'Iepakošana', component: Packaging, key: 'Packaging', step: 4 },
+  { title: 'Priekšapstrāde', component: PreProcessing, key: 'PreProcessing', step: 5 },
+  { title: 'Piegāde', component: Transportation, key: 'Transportation', step: 6 },
 ])
 
 const activeSection = ref(sections[0])
 
 const formData = reactive({
-  PaintArea: 0,
+  paintArea: 0,
   IronThicknes: '',
-  Overlay: {
-    virsmasParkajums: [],
-    virsmasIzskats: '',
+  overlay: {
+    type: [],
+    visual: '',
   },
-  Packaging: '',
-  PreProcessing: '',
-  Transportation: [],
+  packaging: '',
+  preProcessing: '',
+  transportation: [],
   comments: '',
 })
 

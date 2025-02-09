@@ -1,10 +1,10 @@
 <template>
   <div>
     <fieldset>
-      <legend class="text-lg font-semibold mb-2">Ievadiet metāla maksimālo biezumu B:</legend>
+      <legend class="text-lg font-semibold mb-2">Ievadiet metāla maksimālo biezumu:</legend>
       <div class="space-y-2">
         <label v-for="option in options" :key="option" class="flex items-center space-x-2">
-          <input type="radio" v-model="selectedBiezums" :value="option" class="form-radio" />
+          <input type="radio" v-model="selectedBiezums" :value="option" class="radio" />
           <span>{{ option }}</span>
         </label>
       </div>

@@ -4,12 +4,7 @@
       <legend class="text-lg font-semibold mb-2">Nepieciešamais iepakošanas veids:</legend>
       <div class="space-y-2">
         <label v-for="option in options" :key="option.value" class="flex items-center space-x-2">
-          <input
-            type="radio"
-            v-model="selectedIepakojums"
-            :value="option.value"
-            class="form-radio"
-          />
+          <input type="radio" v-model="selectedIepakojums" :value="option.value" class="radio" />
           <span>{{ option.label }}</span>
         </label>
       </div>
