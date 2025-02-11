@@ -1,18 +1,5 @@
 <template>
-  <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">PULVERKRĀSOŠANAS CENAS KALKULATORS</h1>
-    <p class="mb-4">
-      Cenas kalkulators aprēķinās pulverkrāsošanas izmaksas, balstoties uz sniegto informāciju.
-    </p>
-    <ol class="list-decimal list-inside mb-4">
-      <li>Solis – nomēriet vajadzīgos izmērus un ierakstiet tos paredzētajās vietās.</li>
-      <li>Aizpildiet nepieciešamo papildinformāciju un saņemiet cenu.</li>
-    </ol>
-    <p class="mb-4 font-bold">
-      N.B.! Cena ir rēķināta, balstoties uz iesniegto informāciju. Lai saņemtu cenas apstiprinājumu
-      vai arī neskaidru jautājumu gadījumā, augšupielādējiet detaļas foto vai rasējumu
-    </p>
-
+  <div class="container mx-auto p-4 h-screen flex flex-col justify-center">
     <div class="w-full flex justify-center">
       <ul class="steps mb-8">
         <li
@@ -27,15 +14,13 @@
       </ul>
     </div>
 
-    <div class="card card-border border-base-300 card-md mb-8">
-      <div class="card-body gap-4">
-        <component
-          :is="activeSection.component"
-          v-model="formData[activeSection.key]"
-          @update:model-value="updateFormData(activeSection.key, $event)"
-        />
+    <TransitionGroup name="list">
+      <div class="card card-border border-base-300 card-md mb-8">
+        <div class="card-body gap-4">
+          <component :is="activeSection.component" />
+        </div>
       </div>
-    </div>
+    </TransitionGroup>
     <div class="flex items-center gap-4 mb-10">
       <button
         v-if="activeSection.step > 1"
@@ -68,31 +53,13 @@
 
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
-import { Form } from 'vee-validate'
-import { z } from 'zod'
-import { toFormValidator } from '@vee-validate/zod'
 
-import PaintArea from '@/components/PaintArea.vue'
+import PaintArea from '@/components/PaintArea/PaintArea.vue'
 import IronThicknes from '@/components/IronThicknes.vue'
 import OverlayType from '@/components/OverlayType.vue'
 import Packaging from '@/components/Packaging.vue'
 import PreProcessing from '@/components/PreProcessing.vue'
 import Transportation from '@/components/Transportation.vue'
-
-const schema = toFormValidator(
-  z.object({
-    PaintArea: z.number().min(0),
-    IronThicknes: z.string(),
-    Overlay: z.object({
-      virsmasParkajums: z.array(z.string()),
-      virsmasIzskats: z.string(),
-    }),
-    Packaging: z.string(),
-    PreProcessing: z.string(),
-    Transportation: z.array(z.string()),
-    comments: z.string().optional(),
-  }),
-)
 
 const sections = reactive([
   {
@@ -124,42 +91,25 @@ const formData = reactive({
 })
 
 const calculatedPrice = ref(null)
-
-const toggleSection = (index) => {
-  sections[index].isOpen = !sections[index].isOpen
-}
-
-const updateFormData = (key, value) => {
-  formData[key] = value
-}
-
-const onSubmit = (values) => {
-  // Šeit implementējiet cenas aprēķināšanas loģiku
-  let price = 0
-
-  // Krāsošanas laukuma cena
-  price += formData.PaintArea * 10 // 10 EUR par m²
-
-  // Metāla biezuma piemaksa
-  if (formData.IronThicknes === '4 - 8 mm') price += 5
-  else if (formData.IronThicknes === '9 – 15 mm') price += 10
-  else if (formData.IronThicknes === '16 - 30 mm') price += 15
-
-  // Pārklājuma cena
-  price += formData.Overlay.virsmasParkajums.length * 20
-
-  // Iepakojuma cena
-  if (formData.Packaging === 'stretch_palete') price *= 1.08
-  else if (formData.Packaging === 'stretch_palete_starplikas') price *= 1.15
-
-  // Priekšapstrādes cena
-  if (formData.PreProcessing === 'slipesana') price += formData.PaintArea * 15
-  else if (formData.PreProcessing === 'struklošana') price += formData.PaintArea * 20
-
-  // Transporta cena
-  if (formData.Transportation.includes('panemsana')) price += 25
-  if (formData.Transportation.includes('piegade')) price += 35
-
-  calculatedPrice.value = price.toFixed(2)
-}
 </script>
+<style scoped>
+.list-enter-active {
+  transition: all 0.5s ease 0.3s;
+}
+
+.list-leave-active {
+  transition: all 0.3s ease;
+  position: absolute;
+  width: 100%;
+}
+
+.list-enter-from {
+  opacity: 0;
+  transform: translateX(100px);
+}
+
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(-100px);
+}
+</style>
