@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="onSubmit">
+  <form @submit.prevent="">
     <fieldset class="mb-4">
       <legend class="text-lg font-semibold mb-2">Krāsojamās detaļas figūra:</legend>
       <div class="space-y-2">
