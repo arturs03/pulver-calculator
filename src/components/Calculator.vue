@@ -77,18 +77,18 @@ const sections = reactive([
 
 const activeSection = ref(sections[0])
 
-const formData = reactive({
-  paintArea: 0,
-  IronThicknes: '',
-  overlay: {
-    type: [],
-    visual: '',
-  },
-  packaging: '',
-  preProcessing: '',
-  transportation: [],
-  comments: '',
-})
+// const formData = reactive({
+//   paintArea: 0,
+//   IronThicknes: '',
+//   overlay: {
+//     type: [],
+//     visual: '',
+//   },
+//   packaging: '',
+//   preProcessing: '',
+//   transportation: [],
+//   comments: '',
+// })
 
 const calculatedPrice = ref(null)
 </script>
