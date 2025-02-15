@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import VInput from '@/components/ui/VInput.vue'
-import { defineModel, watch } from 'vue'
+import { watch } from 'vue'
 import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
@@ -19,19 +19,16 @@ const schema = toTypedSchema(
 const { handleSubmit } = useForm({
   validationSchema: schema,
   validateOnMount: false,
-  initialValues: {
-    objectLength: 1,
-    objectWidth: 1,
-    objectHeight: 1,
-  },
 })
 
+const emits = defineEmits(['formValues'])
 const onSubmit = handleSubmit((formValues) => {
   const l = formValues.objectLength
   const w = formValues.objectWidth
   const h = formValues.objectHeight || 0
 
   area.value = 2 * (l * w + l * h + w * h)
+  emits('formValues', formValues)
 })
 
 watch(triggerSubmit, (val) => {

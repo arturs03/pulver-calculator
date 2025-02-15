@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import VInput from '@/components/ui/VInput.vue'
 import Info from '@/components/ui/Info.vue'
-import { defineModel, watch } from 'vue'
+import { watch } from 'vue'
 import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
+import { nDimmensionOptions } from '@/components/PaintArea/constants'
 
 const triggerSubmit = defineModel<boolean>('triggerSubmit')
 const area = defineModel<number>('area')
 
-const sOptions = [10, 20, 30, 40, 50] as const
 const info = {
   10: 'Apaļš profils D<10 mm, Taisnstūra profils 10x10 mm, 5x15 mm',
   20: 'Apaļš profils D=10-20 mm, Taisnstūra profils 20x20 mm, 15x25 mm, 10x30 mm',
@@ -37,17 +37,17 @@ const schema = toTypedSchema(
 const { handleSubmit } = useForm({
   validationSchema: schema,
   validateOnMount: false,
-  initialValues: {
-    profiles: Array(sOptions.length).fill(0),
-  },
 })
 
+const emits = defineEmits(['formValues'])
 const onSubmit = handleSubmit((formValues) => {
   const totalLength = formValues.profiles.reduce((sum, count, index) => {
-    const perimeter = sOptions[index]
+    const perimeter = nDimmensionOptions[index]
     return sum + count * perimeter
   }, 0)
-  area.value = totalLength / 1000
+
+  area.value = totalLength
+  emits('formValues', formValues)
 })
 
 watch(triggerSubmit, (val) => {
@@ -62,7 +62,7 @@ watch(triggerSubmit, (val) => {
     <fieldset>
       <legend class="text-sm font-medium mb-2">Profila apkārtmērs S:</legend>
       <div class="space-y-2">
-        <VInput v-for="(s, i) in sOptions" :key="s" :value-path="`profiles[${i}]`">
+        <VInput v-for="(s, i) in nDimmensionOptions" :key="s" :value-path="`profiles[${i}]`">
           <template #label>
             <p class="contents text-sm font-medium">S={{ s }}mm</p>
             <Info :data="getTooltipInfo(s)" />

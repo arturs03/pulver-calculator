@@ -4,7 +4,7 @@
       <legend class="text-lg font-semibold mb-2">Nepieciešamais iepakošanas veids:</legend>
       <div class="space-y-2">
         <label v-for="option in options" :key="option.value" class="flex items-center space-x-2">
-          <input type="radio" v-model="selectedIepakojums" :value="option.value" class="radio" />
+          <input type="radio" v-model="selectedPackaging" :value="option" class="radio" />
           <span>{{ option.label }}</span>
         </label>
       </div>
@@ -13,7 +13,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+
+const props = defineProps<{
+  triggerEmit: boolean
+}>()
 
 const options = [
   { value: 'stretch', label: "'Stretch' plēve (bezmaksas)" },
@@ -25,5 +29,15 @@ const options = [
   },
 ]
 
-const selectedIepakojums = ref('stretch')
+const selectedPackaging = ref(null)
+
+const emits = defineEmits(['data'])
+watch(
+  () => props.triggerEmit,
+  (val) => {
+    if (val) {
+      emits('data', selectedPackaging.value)
+    }
+  },
+)
 </script>

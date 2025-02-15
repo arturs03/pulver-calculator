@@ -5,16 +5,16 @@
       <div class="space-y-2">
         <label v-for="option in options" :key="option.value" class="flex items-center space-x-2">
           <input
-            type="checkbox"
-            v-model="selectedTransports"
+            type="radio"
+            v-model="selectedTransportation"
             :value="option.value"
-            class="checkbox"
+            class="radio"
           />
           <span>{{ option.label }}</span>
         </label>
       </div>
     </fieldset>
-    <div class="mb-4 text-sm text-gray-600">
+    <div class="mb-4 text-sm text-gray-400">
       <p>N.B. Pulverkraso.lv nodrošina transportu darba dienās 2 x nedēļā.</p>
       <p>
         Pulverkraso.lv nodrošina iekraušanu/izkraušanu savā teritorijā, bet Pasūtītājs nodrošina
@@ -34,13 +34,30 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+
+const props = defineProps<{
+  triggerEmit: boolean
+}>()
 
 const options = [
   { value: 'panemsana', label: 'Paņemšana no pasūtītāja (25 eur/reiss Rīgas robežās)' },
   { value: 'piegade', label: 'Piegāde pasūtītājam (35 eur/reiss Rīgas robežās)' },
 ]
 
-const selectedTransports = ref([])
+const selectedTransportation = ref('')
 const comments = ref('')
+
+const emits = defineEmits(['data'])
+watch(
+  () => props.triggerEmit,
+  (val) => {
+    if (val) {
+      emits('data', {
+        selectedTransportation: selectedTransportation.value,
+        comments: comments.value,
+      })
+    }
+  },
+)
 </script>

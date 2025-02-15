@@ -30,21 +30,24 @@
       v-if="figureType === OPTION_2D"
       v-model:area="area"
       v-model:trigger-submit="triggerSubmit"
+      @form-values="setFormValues"
     />
     <PaintArea3D
       v-else-if="figureType === OPTION_3D"
       v-model:area="area"
       v-model:trigger-submit="triggerSubmit"
+      @form-values="setFormValues"
     />
     <PaintAreaND
       v-else-if="figureType === OPTION_ND"
       v-model:area="area"
       v-model:trigger-submit="triggerSubmit"
+      @form-values="setFormValues"
     />
     <button type="submit" class="mt-4 btn btn-info" @click="triggerSubmit = true">
       Aprēķināt laukumu
     </button>
-    <p v-if="area" class="mt-4 text-lg font-semibold">Aprēķinātais laukums: {{ area }} mm²</p>
+    <p v-if="area" class="mt-4 font-semibold">Aprēķinātais laukums: {{ area }} mm²</p>
   </form>
 </template>
 
@@ -55,6 +58,10 @@ import PaintArea3D from '@/components/PaintArea/PaintArea3D.vue'
 import PaintAreaND from '@/components/PaintArea/PaintAreaND.vue'
 import { ref, watch } from 'vue'
 
+const props = defineProps<{
+  triggerEmit: boolean
+}>()
+
 const OPTION_2D = '2d'
 const OPTION_3D = '3d'
 const OPTION_ND = 'nd'
@@ -62,10 +69,28 @@ const OPTION_ND = 'nd'
 const figureType = ref(OPTION_2D)
 const triggerSubmit = ref(false)
 const area = ref(0)
+const formValues = ref<object | null>(null)
+function setFormValues(values: object) {
+  formValues.value = values
+}
 
 watch(figureType, (newVal, oldVal) => {
   if (newVal !== oldVal) {
     area.value = 0
   }
 })
+
+const emits = defineEmits(['data'])
+watch(
+  () => props.triggerEmit,
+  (val) => {
+    if (val) {
+      emits('data', {
+        area: area.value,
+        dimmensions: formValues.value,
+        figureType: figureType.value,
+      })
+    }
+  },
+)
 </script>

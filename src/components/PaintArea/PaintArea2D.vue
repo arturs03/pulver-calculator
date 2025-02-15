@@ -18,10 +18,6 @@ const schema = toTypedSchema(
 const { handleSubmit } = useForm({
   validationSchema: schema,
   validateOnMount: false,
-  initialValues: {
-    objectLength: 1,
-    objectWidth: 1,
-  },
 })
 
 watch(triggerSubmit, (val) => {
@@ -31,8 +27,10 @@ watch(triggerSubmit, (val) => {
   }
 })
 
+const emits = defineEmits(['formValues'])
 const onSubmit = handleSubmit((formValues) => {
   area.value = formValues.objectLength * formValues.objectWidth
+  emits('formValues', formValues)
 })
 </script>
 <template>

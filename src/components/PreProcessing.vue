@@ -4,12 +4,7 @@
       <legend class="text-lg font-semibold mb-2">Nepieciešamā priekšapstrāde:</legend>
       <div class="space-y-2">
         <label v-for="option in options" :key="option.value" class="flex items-center space-x-2">
-          <input
-            type="radio"
-            v-model="selectedPrieksapstrade"
-            :value="option.value"
-            class="radio"
-          />
+          <input type="radio" v-model="selectedPreProcesing" :value="option.value" class="radio" />
           <span>{{ option.label }}</span>
         </label>
       </div>
@@ -21,7 +16,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+
+const props = defineProps<{
+  triggerEmit: boolean
+}>()
 
 const options = [
   {
@@ -31,5 +30,15 @@ const options = [
   { value: 'struklošana', label: 'Strūklošana Sa2½ (20 eur/m²)' },
 ]
 
-const selectedPrieksapstrade = ref('')
+const selectedPreProcesing = ref('')
+
+const emits = defineEmits(['data'])
+watch(
+  () => props.triggerEmit,
+  (val) => {
+    if (val) {
+      emits('data', selectedPreProcesing.value)
+    }
+  },
+)
 </script>

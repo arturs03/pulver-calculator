@@ -8,7 +8,7 @@
           :key="option"
           class="flex items-center space-x-2"
         >
-          <input type="checkbox" v-model="selectedParklajumi" :value="option" class="checkbox" />
+          <input type="radio" v-model="selectedOverlay" :value="option" class="radio" />
           <span>{{ option }}</span>
         </label>
       </div>
@@ -21,7 +21,7 @@
           :key="option"
           class="flex items-center space-x-2"
         >
-          <input type="radio" v-model="selectedVirsmasIzskats" :value="option" class="radio" />
+          <input type="radio" v-model="selectedOverlayLook" :value="option" class="radio" />
           <span>{{ option }}</span>
         </label>
       </div>
@@ -30,7 +30,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+
+const props = defineProps<{
+  triggerEmit: boolean
+}>()
 
 const parklajumaOpcijas = [
   'EPOXY grunts',
@@ -46,6 +50,19 @@ const virsmasIzskataOpcijas = [
   "Struktūra 'apelsīna miza'",
 ]
 
-const selectedParklajumi = ref([])
-const selectedVirsmasIzskats = ref('')
+const selectedOverlay = ref('')
+const selectedOverlayLook = ref('')
+
+const emits = defineEmits(['data'])
+watch(
+  () => props.triggerEmit,
+  (val) => {
+    if (val) {
+      emits('data', {
+        selectedOverlay: selectedOverlay.value,
+        selectedOverlayLook: selectedOverlayLook.value,
+      })
+    }
+  },
+)
 </script>
