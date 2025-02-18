@@ -4,12 +4,11 @@ import Calculator from '@/components/Calculator.vue'
 
 const isCalculatorView = ref(false)
 </script>
-
 <template>
   <main>
     <div
       v-if="!isCalculatorView"
-      class="container mx-auto flex flex-col items-center justify-center h-screen"
+      class="container mx-auto flex flex-col items-center justify-center h-screen p-4"
     >
       <h1 class="text-2xl font-bold mb-4">PULVERKRĀSOŠANAS CENAS KALKULATORS</h1>
       <p class="mb-4">

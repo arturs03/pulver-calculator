@@ -13,3 +13,8 @@ export interface ITransportation {
   selectedTransportation: string
   comments: string
 }
+
+export interface ISection {
+  title: string
+  step: number
+}

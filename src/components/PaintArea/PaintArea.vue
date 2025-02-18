@@ -50,7 +50,6 @@
     <p v-if="area" class="mt-4 font-semibold">Aprēķinātais laukums: {{ area }} mm²</p>
   </form>
 </template>
-
 <script setup lang="ts">
 import Info from '@/components/ui/Info.vue'
 import PaintArea2D from '@/components/PaintArea/PaintArea2D.vue'

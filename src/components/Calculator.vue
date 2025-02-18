@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto p-4 min-h-screen flex flex-col justify-center">
-    <div class="w-full flex justify-center">
+    <div class="w-full hidden md:flex justify-center">
       <ul class="steps mb-8">
         <li
           v-for="(section, index) in sections"
@@ -12,7 +12,10 @@
         </li>
       </ul>
     </div>
-
+    <div class="flex flex-col gap-2 items-center w-full md:hidden mb-5">
+      <h2 class="text-xl font-bold mb-4">{{ activeSection.title }}</h2>
+      <progress class="progress progress-primary" :value="progressPercentage" max="100" />
+    </div>
     <div class="card card-border border-base-300 card-md mb-8 dark:bg-gray-300/10">
       <div class="card-body gap-4">
         <Transition name="step">
@@ -26,7 +29,6 @@
         </Transition>
       </div>
     </div>
-
     <p v-if="errorMessage.length" class="text-red-400 my-4">{{ errorMessage }}</p>
     <div class="flex items-center gap-4 mb-10">
       <button v-if="canGoBack" class="btn btn-neutral" @click="goBack">Iepriekšējais</button>
@@ -36,14 +38,12 @@
     </div>
     <div v-if="calculatedPrice" class="mt-4 p-4 rounded">
       <h2 class="text-xl font-bold">Aprēķinātā cena: {{ calculatedPrice }} EUR</h2>
-
       <pre class="text-sm">
         {{ formData }}
       </pre>
     </div>
   </div>
 </template>
-
 <script lang="ts" setup>
 import { ref, shallowRef, computed } from 'vue'
 import PaintArea from '@/components/PaintArea/PaintArea.vue'
@@ -53,6 +53,7 @@ import Packaging from '@/components/Packaging.vue'
 import PreProcessing from '@/components/PreProcessing.vue'
 import Transportation from '@/components/Transportation.vue'
 import type { IPaintAreaData, IOverlayType, ITransportation } from '@/components/types'
+
 const sections = [
   {
     title: 'Krāsošanas laukums',
@@ -187,12 +188,14 @@ const formData = ref({
   comments: '',
 })
 
+const MAX_STEPS = 6
+
 const canGoBack = computed(() => activeSection.value.step > 1)
 function goBack() {
   activeSection.value = sections[activeSection.value.step - 2]
 }
 
-const canGoNext = computed(() => activeSection.value.step < 6)
+const canGoNext = computed(() => activeSection.value.step < MAX_STEPS)
 function goNext() {
   activeSection.value = sections[activeSection.value.step]
 }
@@ -201,6 +204,11 @@ const calculatedPrice = ref<number | null>(null)
 function calculatePrice() {
   calculatedPrice.value = 10000
 }
+
+const progressPercentage = computed(() => {
+  const step = calculatedPrice.value ? MAX_STEPS : activeSection.value.step - 1
+  return Math.round((step / MAX_STEPS) * 100)
+})
 </script>
 <style scoped>
 .step-enter-active {
